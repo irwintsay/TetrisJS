@@ -48,7 +48,8 @@ tetrisGame.buildPiece = function() {
   var currentPieceShape = this.nextPiece;
   switch(currentPieceShape) {
     case "line":
-      this.currentPiece = [[0,3],[0,4],[0,5],[0,6]];
+      // this.currentPiece = [[0,3],[0,4],[0,5],[0,6]];
+      this.currentPiece = [[0,4],[0,3],[0,5],[0,6]];    // Experimenting with placing origin coordinate first in array
       break;
     case "square":
       this.currentPiece = [[0,4],[0,5],[1,4],[1,5]];
@@ -111,6 +112,8 @@ tetrisGame.checkCompleteRow = function() {
   }
 }
 
+// Take in completed row number as argument, clear that row and shift everything
+// above it down by 1
 tetrisGame.clearCompleteRow = function(completedRow) {
   for (var i = completedRow; i > 0; i--) {          // Start at the completed row and work your way down
     for (var j = 0; j < this.space[i].length; j++) {
@@ -179,6 +182,9 @@ tetrisGame.moveDown = function() {
 tetrisGame.moveRotate = function() {
   tetrisGame.clearPiece();
 
+  // Part of EXPERIMENTAL ROTATION COLLISION DETECTION
+  var oldOrientation = tetrisGame.currentPiece;
+
   // Choose an origin point for the current piece
   var origin = tetrisGame.currentPiece[0];
   // Origin point may change after a rotation
@@ -205,10 +211,30 @@ tetrisGame.moveRotate = function() {
   }
 
   // Translate coordinates back to original orientation
-  for ( var i = 1; i < tetrisGame.currentPiece.length; i++) {
+  for (var i = 1; i < tetrisGame.currentPiece.length; i++) {
     tetrisGame.currentPiece[i][0] += xShift;
     tetrisGame.currentPiece[i][1] += yShift;
   }
+
+  // EXPERIMENTAL ROTATION COLLISION DETECTION (NOT WORKING)
+  var x, y;
+  var collision = false;
+  for (var i = 0; i < tetrisGame.currentPiece.length; i++) {
+    x = tetrisGame.currentPiece[i][0];
+    y = tetrisGame.currentPiece[i][1];
+    if (y < 0 || y > 9) {
+      collision = true;
+      console.log("wall rotation collision");
+    } else if(tetrisGame.space[x][y]) {
+      collision = true;
+      console.log("block rotation collision");
+    }
+  }
+  if (collision) {
+    tetrisGame.currentPiece = oldOrientation;
+  }
+  // EXPERIMENT ********************************
+
   tetrisGame.paintPiece();
 }
 
