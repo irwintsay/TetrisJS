@@ -138,8 +138,16 @@ tetrisGame.movePiece = function() {
   } else {
     clearInterval(tetrisGame.startNow);
     tetrisGame.checkCompleteRow();
-    tetrisGame.nextPiece = tetrisGame.getRandomPiece();
-    tetrisGame.play();
+    if (tetrisGame.currentPiece[0][0] === 0 ||
+        tetrisGame.currentPiece[1][0] === 0 ||
+        tetrisGame.currentPiece[2][0] === 0 ||
+        tetrisGame.currentPiece[3][0] === 0
+    ) {
+      alert("YOU LOSE");
+    } else {
+      tetrisGame.nextPiece = tetrisGame.getRandomPiece();
+      tetrisGame.play();
+    }
   }
 }
 
@@ -176,66 +184,102 @@ tetrisGame.moveDown = function() {
   }
 }
 
-// EXPERIMENTAL STUFF PROBABLY BROKEN
-// I have to define collision detection for rotation function so that pieces
+// I have to implement collision detection for rotation function so that pieces
 // don't clip through the wall during rotation
 tetrisGame.moveRotate = function() {
   tetrisGame.clearPiece();
 
-  // Part of EXPERIMENTAL ROTATION COLLISION DETECTION
-  var oldOrientation = tetrisGame.currentPiece;
-
-  // Choose an origin point for the current piece
-  var origin = tetrisGame.currentPiece[0];
-  // Origin point may change after a rotation
-
-  // Translate coordinates to an origin point of (0,0)
-  // So if current piece has an origin coordinate of (3,4), then I have to
-  // subtract -3 and -4 from x and y respectively of each current piece
-  // coordinate point
-  var xShift = tetrisGame.currentPiece[0][0] - 0;           // This coordinate translating should be in it's own function
-  var yShift = tetrisGame.currentPiece[0][1] - 0;
-  for (var i = 1; i < tetrisGame.currentPiece.length; i++) {
-    tetrisGame.currentPiece[i][0] -= xShift;
-    tetrisGame.currentPiece[i][1] -= yShift;
+  // EXPERIMENTAL CODE
+  var originalCoordinates = [];
+  var x;
+  for (var i = 0; i < this.currentPiece.length; i++) {
+    x = this.currentPiece[i];
+    originalCoordinates.push(x);
   }
+  // EXPERIMENTAL CODE
 
-  // Rotate coordinates
-  var rotatedX;
-  var rotatedY;
-  for (var i = 1; i < tetrisGame.currentPiece.length; i++) {  // Should probably be in it's own function as well
-    rotatedX = tetrisGame.currentPiece[i][1];                 // New X should equal old Y
-    rotatedY = tetrisGame.currentPiece[i][0] * -1;            // New Y should equal -(old X)
-    tetrisGame.currentPiece[i][0] = rotatedX;
-    tetrisGame.currentPiece[i][1] = rotatedY;
-  }
-
+  // Translate coordinate to new origin of (0,0) and assign to variable
+  // Rotate coordinates and assign back to variable
   // Translate coordinates back to original orientation
-  for (var i = 1; i < tetrisGame.currentPiece.length; i++) {
-    tetrisGame.currentPiece[i][0] += xShift;
-    tetrisGame.currentPiece[i][1] += yShift;
-  }
+  var pieceAndCollision = this.translateOriginAndRotate(this.currentPiece);
+  console.log("Original Coord: ", originalCoordinates);
+  // if(!pieceAndCollision[1]) {
+  //   this.currentPiece = pieceAndCollision[0];
+  // }
+  this.currentPiece = pieceAndCollision[0];
+  tetrisGame.paintPiece();
+}
 
-  // EXPERIMENTAL ROTATION COLLISION DETECTION (NOT WORKING)
-  var x, y;
+tetrisGame.translateOriginAndRotate = function(puzzlePiece) {
+  // Pick an origin point, find distance to (0,0), translate coordinates to a
+  // new origin point of (0,0).
+  // i.e. if current piece has an origin coordinate of (3,4), then I have to
+  // subtract -3 and -4 from x and y respectively of each current coordinate point
+  var origin = puzzlePiece[0];
+  var xShift = origin[0] - 0;
+  var yShift = origin[1] - 0;
   var collision = false;
-  for (var i = 0; i < tetrisGame.currentPiece.length; i++) {
-    x = tetrisGame.currentPiece[i][0];
-    y = tetrisGame.currentPiece[i][1];
+  var pieceAndCollision = [];     // Store puzzle coordinate array and collision value
+  var x,y;
+  for (var i = 1; i < puzzlePiece.length; i++) {
+    puzzlePiece[i][0] -= xShift;
+    puzzlePiece[i][1] -= yShift;
+  }
+  // Rotate coordinates
+  var rotatedX;     // New X value
+  var rotatedY;     // New Y value
+  for (var i = 1; i < puzzlePiece.length; i++) {  // Should probably be in it's own function as well
+    rotatedX = puzzlePiece[i][1];                 // New X should equal old Y
+    rotatedY = puzzlePiece[i][0] * -1;            // New Y should equal -(old X)
+    puzzlePiece[i][0] = rotatedX;
+    puzzlePiece[i][1] = rotatedY;
+  }
+  // Translate coordinates with x and y shift values
+  for (var i = 1; i < puzzlePiece.length; i++) {
+    puzzlePiece[i][0] += xShift;
+    puzzlePiece[i][1] += yShift;
+  }
+  for (var i = 0; i < puzzlePiece.length; i++) {
+    x = puzzlePiece[i][0];
+    y = puzzlePiece[i][1];
     if (y < 0 || y > 9) {
       collision = true;
-      console.log("wall rotation collision");
-    } else if(tetrisGame.space[x][y]) {
+      console.log("R collision with side");
+      tetrisGame.reverseRotate(puzzlePiece, xShift, yShift);
+    } else if (x > 19) {
       collision = true;
-      console.log("block rotation collision");
+      console.log("R collision with floor");
+      tetrisGame.reverseRotate(puzzlePiece, xShift, yShift);
+    } else if (tetrisGame.space[x][y]) {
+      collision = true;
+      console.log("R collision with block");
+      tetrisGame.reverseRotate(puzzlePiece, xShift, yShift);
     }
   }
-  if (collision) {
-    tetrisGame.currentPiece = oldOrientation;
-  }
-  // EXPERIMENT ********************************
+  pieceAndCollision.push(puzzlePiece, collision);
+  console.log(pieceAndCollision[1]);
+  return pieceAndCollision;
+}
 
-  tetrisGame.paintPiece();
+// EXPERIMENTAL CODE
+// Wow this is a really dumb way to implement rotation collision detection
+// but it actually works... leaving it for now, but ideally I would like to do
+// this with way less code.
+tetrisGame.reverseRotate = function(puzzlePiece, xShift, yShift) {
+  for (var i = 1; i < puzzlePiece.length; i++) {
+    puzzlePiece[i][0] -= xShift;
+    puzzlePiece[i][1] -= yShift;
+  }
+  for (var i = 1; i < puzzlePiece.length; i++) {  // Should probably be in it's own function as well
+    rotatedX = puzzlePiece[i][1] * -1;                 // New X should equal old Y
+    rotatedY = puzzlePiece[i][0];            // New Y should equal -(old X)
+    puzzlePiece[i][0] = rotatedX;
+    puzzlePiece[i][1] = rotatedY;
+  }
+  for (var i = 1; i < puzzlePiece.length; i++) {
+    puzzlePiece[i][0] += xShift;
+    puzzlePiece[i][1] += yShift;
+  }
 }
 
 tetrisGame.collisionFloor = function() {
@@ -369,9 +413,15 @@ tetrisGame.paintDiv = function(x, y, shouldPaint) {
       break;
   }
   if (shouldPaint) {
-    $rowHunt.eq(y).css("background-color","blue");
+    $rowHunt.eq(y).css({
+      "background-color": "blue",
+      "border": "1px solid black"
+    });
   } else {
-    $rowHunt.eq(y).css("background-color","black");
+    $rowHunt.eq(y).css({
+      "background-color": '#D8D8D8',
+      "border": "1px solid #BFBFBF"
+    });
   }
 }
 
@@ -420,5 +470,5 @@ $(function() {
   var $gameSpace = $('.game-block');
   tetrisGame.init($gameSpace);
   tetrisGame.setInputHandler();
-  // tetrisGame.play();
+  tetrisGame.play();
 })
