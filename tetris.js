@@ -37,6 +37,7 @@ tetrisGame.init = function($gameSpace) {
   this.currentPiece = [];
   this.nextPiece = this.getRandomPiece();
   this.startNow;
+  this.lineCount = 0;
 }
 
 tetrisGame.getRandomPiece = function() {
@@ -88,6 +89,10 @@ tetrisGame.paintPiece = function() {
   this.updateBoard();
 }
 
+tetrisGame.printScore = function(howManyLines) {
+  $('#score').text("Lines: " + howManyLines);
+}
+
 tetrisGame.clearPiece = function() {
   var x, y;
   for (var i = 0; i < this.currentPiece.length; i++) {
@@ -108,8 +113,10 @@ tetrisGame.checkCompleteRow = function() {
   for (var i = 0; i < this.space.length; i++) {
     if (this.space[i].every(isAllTrue)) {
       this.clearCompleteRow(i);
+      howManyLines++;
     }
   }
+  return howManyLines;
 }
 
 // Take in completed row number as argument, clear that row and shift everything
@@ -137,7 +144,10 @@ tetrisGame.movePiece = function() {
     tetrisGame.paintPiece();
   } else {
     clearInterval(tetrisGame.startNow);
-    tetrisGame.checkCompleteRow();
+
+    tetrisGame.lineCount += tetrisGame.checkCompleteRow();
+    tetrisGame.printScore(tetrisGame.lineCount);
+
     if (tetrisGame.currentPiece[0][0] === 0 ||
         tetrisGame.currentPiece[1][0] === 0 ||
         tetrisGame.currentPiece[2][0] === 0 ||
