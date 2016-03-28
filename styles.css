@@ -1,0 +1,57 @@
+html {
+  box-sizing: content-box;
+}
+body {
+  background-color: lightgrey;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+}
+
+#game-space {
+  width: 220px;
+  height: 400px;
+  background-color: black;
+  margin: -200px 0 0 -100px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border: 5px solid white;
+}
+
+.block {
+  height: 20px;
+  width: 20px;
+  background-color: lightgrey;
+  border: 2px solid white;
+  margin: 0;
+  position: relative;
+}
+
+#line-piece {
+  height: 80px;
+  width: 20px;
+  position: relative;
+  top: 0px;
+  left: 100px;
+  margin: 0;
+  /*transform: rotate(90deg);*/
+}
+
+#triangle-piece {
+  display: flex;
+  flex-wrap: wrap;
+  width: 30px;
+  height: 20px;
+  position: relative;
+  margin: 0;
+  border: 2px solid white;
+  top: 25%;
+  left: 25%;
+}
+
+#special-t {
+  left: 33%;
+}

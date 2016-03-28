@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Tetris perhaps???</title>
+    <link rel="stylesheet" href="tetris.css" media="screen" title="no title" charset="utf-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.js" charset="utf-8"></script>
+    <script src="tetris.js" charset="utf-8"></script>
+  </head>
+  <body>
+    <div id="game-space">
+      <div class="row" id="r1">
+        <div class="game-block" row="1" col="1"></div><div class="game-block" row="1" col="2"></div><div class="game-block" row="1" col="3"></div><div class="game-block" row="1" col="4"></div><div class="game-block" row="1" col="5"></div><div class="game-block" row="1" col="6"></div><div class="game-block" row="1" col="7"></div><div class="game-block" row="1" col="8"></div><div class="game-block" row="1" col="9"></div><div class="game-block" row="1" col="10"></div>
+      </div>
+      <div class="row" id="r2">
+        <div class="game-block" row="2" col="1"></div><div class="game-block" row="2" col="2"></div><div class="game-block" row="2" col="3"></div><div class="game-block" row="2" col="4"></div><div class="game-block" row="2" col="5"></div><div class="game-block" row="2" col="6"></div><div class="game-block" row="2" col="7"></div><div class="game-block" row="2" col="8"></div><div class="game-block" row="2" col="9"></div><div class="game-block" row="2" col="10"></div>
+      </div>
+      <div class="row" id="r3">
+        <div class="game-block" row="3" col="1"></div><div class="game-block" row="3" col="2"></div><div class="game-block" row="3" col="3"></div><div class="game-block" row="3" col="4"></div><div class="game-block" row="3" col="5"></div><div class="game-block" row="3" col="6"></div><div class="game-block" row="3" col="7"></div><div class="game-block" row="3" col="8"></div><div class="game-block" row="3" col="9"></div><div class="game-block" row="3" col="10"></div>
+      </div>
+      <div class="row" id="r4">
+        <div class="game-block" row="4" col="1"></div><div class="game-block" row="4" col="2"></div><div class="game-block" row="4" col="3"></div><div class="game-block" row="4" col="4"></div><div class="game-block" row="4" col="5"></div><div class="game-block" row="4" col="6"></div><div class="game-block" row="4" col="7"></div><div class="game-block" row="4" col="8"></div><div class="game-block" row="4" col="9"></div><div class="game-block" row="4" col="10"></div>
+      </div>
+      <div class="row" id="r5">
+        <div class="game-block" row="5" col="1"></div><div class="game-block" row="5" col="2"></div><div class="game-block" row="5" col="3"></div><div class="game-block" row="5" col="4"></div><div class="game-block" row="5" col="5"></div><div class="game-block" row="5" col="6"></div><div class="game-block" row="5" col="7"></div><div class="game-block" row="5" col="8"></div><div class="game-block" row="5" col="9"></div><div class="game-block" row="5" col="10"></div>
+      </div>
+      <div class="row" id="r6">
+        <div class="game-block" row="6" col="1"></div><div class="game-block" row="6" col="2"></div><div class="game-block" row="6" col="3"></div><div class="game-block" row="6" col="4"></div><div class="game-block" row="6" col="5"></div><div class="game-block" row="6" col="6"></div><div class="game-block" row="6" col="7"></div><div class="game-block" row="6" col="8"></div><div class="game-block" row="6" col="9"></div><div class="game-block" row="6" col="10"></div>
+      </div>
+      <div class="row" id="r7">
+        <div class="game-block" row="7" col="1"></div><div class="game-block" row="7" col="2"></div><div class="game-block" row="7" col="3"></div><div class="game-block" row="7" col="4"></div><div class="game-block" row="7" col="5"></div><div class="game-block" row="7" col="6"></div><div class="game-block" row="7" col="7"></div><div class="game-block" row="7" col="8"></div><div class="game-block" row="7" col="9"></div><div class="game-block" row="7" col="10"></div>
+      </div>
+      <div class="row" id="r8">
+        <div class="game-block" row="8" col="1"></div><div class="game-block" row="8" col="2"></div><div class="game-block" row="8" col="3"></div><div class="game-block" row="8" col="4"></div><div class="game-block" row="8" col="5"></div><div class="game-block" row="8" col="6"></div><div class="game-block" row="8" col="7"></div><div class="game-block" row="8" col="8"></div><div class="game-block" row="8" col="9"></div><div class="game-block" row="8" col="10"></div>
+      </div>
+      <div class="row" id="r9">
+        <div class="game-block" row="9" col="1"></div><div class="game-block" row="9" col="2"></div><div class="game-block" row="9" col="3"></div><div class="game-block" row="9" col="4"></div><div class="game-block" row="9" col="5"></div><div class="game-block" row="9" col="6"></div><div class="game-block" row="9" col="7"></div><div class="game-block" row="9" col="8"></div><div class="game-block" row="9" col="9"></div><div class="game-block" row="9" col="10"></div>
+      </div>
+      <div class="row" id="r10">
+        <div class="game-block" row="10" col="1"></div><div class="game-block" row="10" col="2"></div><div class="game-block" row="10" col="3"></div><div class="game-block" row="10" col="4"></div><div class="game-block" row="10" col="5"></div><div class="game-block" row="10" col="6"></div><div class="game-block" row="10" col="7"></div><div class="game-block" row="10" col="8"></div><div class="game-block" row="10" col="9"></div><div class="game-block" row="10" col="10"></div>
+      </div>
+      <div class="row" id="r11">
+        <div class="game-block" row="11" col="1"></div><div class="game-block" row="11" col="2"></div><div class="game-block" row="11" col="3"></div><div class="game-block" row="11" col="4"></div><div class="game-block" row="11" col="5"></div><div class="game-block" row="11" col="6"></div><div class="game-block" row="11" col="7"></div><div class="game-block" row="11" col="8"></div><div class="game-block" row="11" col="9"></div><div class="game-block" row="11" col="10"></div>
+      </div>
+      <div class="row" id="r12">
+        <div class="game-block" row="12" col="1"></div><div class="game-block" row="12" col="2"></div><div class="game-block" row="12" col="3"></div><div class="game-block" row="12" col="4"></div><div class="game-block" row="12" col="5"></div><div class="game-block" row="12" col="6"></div><div class="game-block" row="12" col="7"></div><div class="game-block" row="12" col="8"></div><div class="game-block" row="12" col="9"></div><div class="game-block" row="12" col="10"></div>
+      </div>
+      <div class="row" id="r13">
+        <div class="game-block" row="13" col="1"></div><div class="game-block" row="13" col="2"></div><div class="game-block" row="13" col="3"></div><div class="game-block" row="13" col="4"></div><div class="game-block" row="13" col="5"></div><div class="game-block" row="13" col="6"></div><div class="game-block" row="13" col="7"></div><div class="game-block" row="13" col="8"></div><div class="game-block" row="13" col="9"></div><div class="game-block" row="13" col="10"></div>
+      </div>
+      <div class="row" id="r14">
+        <div class="game-block" row="14" col="1"></div><div class="game-block" row="14" col="2"></div><div class="game-block" row="14" col="3"></div><div class="game-block" row="14" col="4"></div><div class="game-block" row="14" col="5"></div><div class="game-block" row="14" col="6"></div><div class="game-block" row="14" col="7"></div><div class="game-block" row="14" col="8"></div><div class="game-block" row="14" col="9"></div><div class="game-block" row="14" col="10"></div>
+      </div>
+      <div class="row" id="r15">
+        <div class="game-block" row="15" col="1"></div><div class="game-block" row="15" col="2"></div><div class="game-block" row="15" col="3"></div><div class="game-block" row="15" col="4"></div><div class="game-block" row="15" col="5"></div><div class="game-block" row="15" col="6"></div><div class="game-block" row="15" col="7"></div><div class="game-block" row="15" col="8"></div><div class="game-block" row="15" col="9"></div><div class="game-block" row="15" col="10"></div>
+      </div>
+      <div class="row" id="r16">
+        <div class="game-block" row="16" col="1"></div><div class="game-block" row="16" col="2"></div><div class="game-block" row="16" col="3"></div><div class="game-block" row="16" col="4"></div><div class="game-block" row="16" col="5"></div><div class="game-block" row="16" col="6"></div><div class="game-block" row="16" col="7"></div><div class="game-block" row="16" col="8"></div><div class="game-block" row="16" col="9"></div><div class="game-block" row="16" col="10"></div>
+      </div>
+      <div class="row" id="r17">
+        <div class="game-block" row="17" col="1"></div><div class="game-block" row="17" col="2"></div><div class="game-block" row="17" col="3"></div><div class="game-block" row="17" col="4"></div><div class="game-block" row="17" col="5"></div><div class="game-block" row="17" col="6"></div><div class="game-block" row="17" col="7"></div><div class="game-block" row="17" col="8"></div><div class="game-block" row="17" col="9"></div><div class="game-block" row="17" col="10"></div>
+      </div>
+      <div class="row" id="r18">
+        <div class="game-block" row="18" col="1"></div><div class="game-block" row="18" col="2"></div><div class="game-block" row="18" col="3"></div><div class="game-block" row="18" col="4"></div><div class="game-block" row="18" col="5"></div><div class="game-block" row="18" col="6"></div><div class="game-block" row="18" col="7"></div><div class="game-block" row="18" col="8"></div><div class="game-block" row="18" col="9"></div><div class="game-block" row="18" col="10"></div>
+      </div>
+      <div class="row" id="r19">
+        <div class="game-block" row="19" col="1"></div><div class="game-block" row="19" col="2"></div><div class="game-block" row="19" col="3"></div><div class="game-block" row="19" col="4"></div><div class="game-block" row="19" col="5"></div><div class="game-block" row="19" col="6"></div><div class="game-block" row="19" col="7"></div><div class="game-block" row="19" col="8"></div><div class="game-block" row="19" col="9"></div><div class="game-block" row="19" col="10"></div>
+      </div>
+      <div class="row" id="r20">
+        <div class="game-block" row="20" col="1"></div><div class="game-block" row="20" col="2"></div><div class="game-block" row="20" col="3"></div><div class="game-block" row="20" col="4"></div><div class="game-block" row="20" col="5"></div><div class="game-block" row="20" col="6"></div><div class="game-block" row="20" col="7"></div><div class="game-block" row="20" col="8"></div><div class="game-block" row="20" col="9"></div><div class="game-block" row="20" col="10"></div>
+      </div>
+    </div>
+  </body>
+</html>

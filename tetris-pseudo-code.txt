@@ -1,0 +1,52 @@
+Tetris Game
+
+Initialize Tetris game space. 20 x 10 grid pattern represented in HTML by a
+20 x 10 set of Divs
+
+Define nested array for representing Tetris game space
+
+Define all possible Tetromino pieces with coordinates representing shape and
+pattern
+
+Define the current Tetromino piece, the piece currently in play, as an array of
+coordinates representing its shape and pattern
+
+Randomly select a Tetromino piece and assign to "current piece"
+
+Define collision detection: Collision is true if there are blocks below the
+"current piece" or next to the "current piece".
+
+Define the Tetris game-state:
+
+    Generate a new, random Tetromino piece and assign to current piece
+
+    Drop current piece at a rate of 1 unit per 500ms
+
+    Use event handler to check for player input:
+        Left arrow key: move current piece 1 unit to the left
+        Right arrow key: move current piece 1 unit to the right
+        Down arrow key: move current piece 1 unit down
+        Up arrow key: rotate current piece 90 degrees
+        Space key: drop piece to the lowest point until collision is detected
+
+    Check for collision to the left, right and below:
+        If collision is detected on either side, do not allow player to move
+        current piece further in that direction
+
+        If collision is detected below the current piece, leave the piece there,
+        evaluate any cleared lines, generate a new random Tetromino piece and
+        assign it to the "current piece"
+
+    Check for and evaluate any completed rows:
+        Rows that are 100% filled by blocks have to be deleted and everything
+        above it must be shifted down by 1 row
+        Record number of cleared lines
+
+    Check for losing condition:
+        If current tetromino piece falls and stops "out of bounds", or in other
+        words, above the playable Tetris game space, evaluate to losing
+        condition
+
+    If losing condition has not been met, loop back to first step of Tetris
+    game-state: 1. Generate a new, random Tetromino piece and assign to current
+    piece.
