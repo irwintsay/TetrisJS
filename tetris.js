@@ -27,6 +27,8 @@ tetrisGame.init = function($gameSpace) {
   this.space = this.generateStartingBoard();
   this.gameSpace = $gameSpace;
   this.currentPiece = [];
+  this.currentShape;    // Test-branch code
+  this.currentColor;
   this.nextPiece = this.getRandomPiece();
   this.startNow;
   this.lineCount = 0;
@@ -38,7 +40,7 @@ tetrisGame.generateStartingBoard = function() {
   for (var i = 0; i < 20; i++) {
     var rowArray = [];
     for (var j = 0; j < 10; j++) {
-      rowArray.push(false);
+      rowArray.push(0);
     }
     gameArray.push(rowArray);
   }
@@ -51,31 +53,72 @@ tetrisGame.getRandomPiece = function() {
 }
 
 tetrisGame.buildPiece = function() {
-  var currentPieceShape = this.nextPiece;
-  switch(currentPieceShape) {
+  this.currentShape = this.nextPiece;
+  // Placed the origin coordinate first in each shape array
+  switch(this.currentShape) {
     case "line":
-      this.currentPiece = [[0,4],[0,3],[0,5],[0,6]];    // Experimenting with placing origin coordinate first in array
+      this.currentPiece = [[0,4],[0,3],[0,5],[0,6]];
+      this.currentColor = 1;
       break;
     case "square":
       this.currentPiece = [[0,4],[0,5],[1,4],[1,5]];
+      this.currentColor = 2;
       break;
     case "rightL":
-      this.currentPiece = [[0,4],[0,3],[0,5],[1,3]];     // Experimenting with placing origin coordinate first in array
+      this.currentPiece = [[0,4],[0,3],[0,5],[1,3]];
+      this.currentColor = 3;
       break;
     case "leftL":
-      this.currentPiece = [[0,4],[0,3],[0,5],[1,5]];    // Experimenting with placing origin coordinate first in array
+      this.currentPiece = [[0,4],[0,3],[0,5],[1,5]];
+      this.currentColor = 4;
       break;
     case "zigL":
-      this.currentPiece = [[1,4],[0,3],[0,4],[1,5]];    // Experimenting with placing origin coordinate first in array
+      this.currentPiece = [[1,4],[0,3],[0,4],[1,5]];
+      this.currentColor = 5;
       break;
     case "zigR":
-      this.currentPiece = [[1,4],[0,4],[0,5],[1,3]];    // Experimenting with placing origin coordinate first in array
+      this.currentPiece = [[1,4],[0,4],[0,5],[1,3]];
+      this.currentColor = 6;
       break;
     case "tee":
-      this.currentPiece = [[0,4],[0,3],[0,5],[1,4]];    // Experimenting with placing origin coordinate first in array
+      this.currentPiece = [[0,4],[0,3],[0,5],[1,4]];
+      this.currentColor = 7;
       break;
   }
   this.paintPiece();
+}
+
+// Pass in color code of 1 through 7 and return the RGB color value for that
+// code
+tetrisGame.getRGBColor = function(colorCode) {
+  var rgbColor;
+  switch(colorCode) {
+    case 0:
+    rgbColor = "rgb(216,216,216)";
+    break;
+    case 1:
+    rgbColor = "rgb(0,240,240)";
+    break;
+    case 2:
+    rgbColor = "rgb(241,239,47)";
+    break;
+    case 3:
+    rgbColor = "rgb(221,164,34)";
+    break;
+    case 4:
+    rgbColor = "rgb(0,0,240)";
+    break;
+    case 5:
+    rgbColor = "rgb(207,54,22)";
+    break;
+    case 6:
+    rgbColor = "rgb(138,234,40)";
+    break;
+    case 7:
+    rgbColor = "rgb(136,44,237)";
+    break;
+  }
+  return rgbColor;
 }
 
 tetrisGame.paintPiece = function() {
@@ -83,9 +126,9 @@ tetrisGame.paintPiece = function() {
   for (var i = 0; i < this.currentPiece.length; i++) {
     x = this.currentPiece[i][0];
     y = this.currentPiece[i][1];
-    this.space[x][y] = true;
+    this.space[x][y] = this.currentColor;
   }
-  this.updateBoard();
+  this.updateBoard(false);
 }
 
 tetrisGame.printScore = function(howManyLines) {
@@ -97,9 +140,9 @@ tetrisGame.clearPiece = function() {
   for (var i = 0; i < this.currentPiece.length; i++) {
     x = this.currentPiece[i][0];
     y = this.currentPiece[i][1];
-    this.space[x][y] = false;
+    this.space[x][y] = 0;
   }
-  this.updateBoard();
+  this.updateBoard(false);
 }
 
 // Find completed rows in game space
@@ -127,9 +170,9 @@ tetrisGame.clearCompleteRow = function(completedRow) {
     }
   }
   for (var k = 0; k < this.space[0].length; k++) {
-    this.space[0][k] = false;
+    this.space[0][k] = 0;
   }
-  tetrisGame.updateBoard();
+  tetrisGame.updateBoard(true);
 }
 
 tetrisGame.fallingPiece = function() {
@@ -190,28 +233,12 @@ tetrisGame.moveDown = function() {
   }
 }
 
-// I have to implement collision detection for rotation function so that pieces
-// don't clip through the wall during rotation
 tetrisGame.moveRotate = function() {
   tetrisGame.clearPiece();
-
-  // EXPERIMENTAL CODE
-  var originalCoordinates = [];
-  var x;
-  for (var i = 0; i < this.currentPiece.length; i++) {
-    x = this.currentPiece[i];
-    originalCoordinates.push(x);
-  }
-  // EXPERIMENTAL CODE
-
   // Translate coordinate to new origin of (0,0) and assign to variable
   // Rotate coordinates and assign back to variable
   // Translate coordinates back to original orientation
-  var pieceAndCollision = this.translateOriginAndRotate(this.currentPiece);
-  // if(!pieceAndCollision[1]) {
-  //   this.currentPiece = pieceAndCollision[0];
-  // }
-  this.currentPiece = pieceAndCollision[0];
+  this.currentPiece = this.translateOriginAndRotate(this.currentPiece);
   tetrisGame.paintPiece();
 }
 
@@ -224,7 +251,6 @@ tetrisGame.translateOriginAndRotate = function(puzzlePiece) {
   var xShift = origin[0] - 0;
   var yShift = origin[1] - 0;
   var collision = false;
-  var pieceAndCollision = [];     // Store puzzle coordinate array and collision value
   var x,y;
   for (var i = 1; i < puzzlePiece.length; i++) {
     puzzlePiece[i][0] -= xShift;
@@ -251,6 +277,10 @@ tetrisGame.translateOriginAndRotate = function(puzzlePiece) {
       collision = true;
       console.log("R collision with side");
       tetrisGame.reverseRotate(puzzlePiece, xShift, yShift);
+    } else if (x < 0) {
+      collision = true;
+      console.log("R collision with ceiling");
+      tetrisGame.reverseRotate(puzzlePiece, xShift, yShift);
     } else if (x > 19) {
       collision = true;
       console.log("R collision with floor");
@@ -261,9 +291,7 @@ tetrisGame.translateOriginAndRotate = function(puzzlePiece) {
       tetrisGame.reverseRotate(puzzlePiece, xShift, yShift);
     }
   }
-  pieceAndCollision.push(puzzlePiece, collision);
-  console.log(pieceAndCollision[1]);
-  return pieceAndCollision;
+  return puzzlePiece;
 }
 
 // EXPERIMENTAL CODE
@@ -333,8 +361,9 @@ tetrisGame.collisionSide = function(side) {
   return collision;
 }
 
-tetrisGame.paintDiv = function(x, y, shouldPaint) {
+tetrisGame.paintDiv = function(x, y, shouldPaint, overWrite) {
   var $rowHunt;
+  var color = this.getRGBColor(this.currentColor);
   switch(x) {
     case 0:
       $rowHunt = $('#r1').children();
@@ -399,24 +428,36 @@ tetrisGame.paintDiv = function(x, y, shouldPaint) {
   }
   if (shouldPaint) {
     $rowHunt.eq(y).css({
-      "background-color": "blue",
+      "background-color": this.getRGBColor(this.space[x][y]),
       "border": "1px solid black"
     });
+    // EXPERIMENTAL
+    // if ($rowHunt.eq(y).css("background-color") === "rgb(216, 216, 216)") {
+    //   $rowHunt.eq(y).css({
+    //     "background-color": color,
+    //     "border": "1px solid black"
+    //   });
+    // } else if (overWrite) {
+    //   $rowHunt.eq(y).css({
+    //     "background-color": this.getRGBColor(y),
+    //     "border": "1px solid black"
+    //   });
+    // }
   } else {
     $rowHunt.eq(y).css({
-      "background-color": '#D8D8D8',
-      "border": "1px solid #BFBFBF"
+      "background-color": "rgb(216,216,216)",
+      "border": "1px solid rgb(191,191,191)"
     });
   }
 }
 
-tetrisGame.updateBoard = function() {
+tetrisGame.updateBoard = function(overWrite) {
   for (var i = 0; i < this.space.length; i++) {
     for (var j = 0; j < this.space[i].length; j++) {
       if (this.space[i][j]) {
-        this.paintDiv(i,j,true);
+        this.paintDiv(i,j,true,overWrite);
       } else {
-        this.paintDiv(i,j,false);
+        this.paintDiv(i,j,false,overWrite);
       }
     }
   }
