@@ -1,45 +1,50 @@
+// Declare tetrisGame Object
 var tetrisGame = {};
-var tetrisPiece = {};
 
 tetrisGame.init = function($gameSpace) {
-  this.space = [
-    [false,false,false,false,false,false,false,false,false,false],
-    [false,false,false,false,false,false,false,false,false,false],
-    [false,false,false,false,false,false,false,false,false,false],
-    [false,false,false,false,false,false,false,false,false,false],
-    [false,false,false,false,false,false,false,false,false,false],
-    [false,false,false,false,false,false,false,false,false,false],
-    [false,false,false,false,false,false,false,false,false,false],
-    [false,false,false,false,false,false,false,false,false,false],
-    [false,false,false,false,false,false,false,false,false,false],
-    [false,false,false,false,false,false,false,false,false,false],
-    [false,false,false,false,false,false,false,false,false,false],
-    [false,false,false,false,false,false,false,false,false,false],
-    [false,false,false,false,false,false,false,false,false,false],
-    [false,false,false,false,false,false,false,false,false,false],
-    [false,false,false,false,false,false,false,false,false,false],
-    [false,false,false,false,false,false,false,false,false,false],
-    [false,false,false,false,false,false,false,false,false,false],
-    [false,false,false,false,false,false,false,false,false,false],
-    [false,false,false,false,false,false,false,false,false,false],
-    [false,false,false,false,false,false,false,false,false,false]
-  ];
+  // this.space = [
+  //   [false,false,false,false,false,false,false,false,false,false],
+  //   [false,false,false,false,false,false,false,false,false,false],
+  //   [false,false,false,false,false,false,false,false,false,false],
+  //   [false,false,false,false,false,false,false,false,false,false],
+  //   [false,false,false,false,false,false,false,false,false,false],
+  //   [false,false,false,false,false,false,false,false,false,false],
+  //   [false,false,false,false,false,false,false,false,false,false],
+  //   [false,false,false,false,false,false,false,false,false,false],
+  //   [false,false,false,false,false,false,false,false,false,false],
+  //   [false,false,false,false,false,false,false,false,false,false],
+  //   [false,false,false,false,false,false,false,false,false,false],
+  //   [false,false,false,false,false,false,false,false,false,false],
+  //   [false,false,false,false,false,false,false,false,false,false],
+  //   [false,false,false,false,false,false,false,false,false,false],
+  //   [false,false,false,false,false,false,false,false,false,false],
+  //   [false,false,false,false,false,false,false,false,false,false],
+  //   [false,false,false,false,false,false,false,false,false,false],
+  //   [false,false,false,false,false,false,false,false,false,false],
+  //   [false,false,false,false,false,false,false,false,false,false],
+  //   [false,false,false,false,false,false,false,false,false,false]
+  // ];
+  this.space = this.generateStartingBoard();
   this.gameSpace = $gameSpace;
-  tetrisPiece = {
-    line: [0,0],
-    square: [0,0],
-    rightL: [0,0],
-    leftL: [0,0],
-    zigL: [0,0],
-    zigR: [0,0],
-    tee: [0,0]
-  };
   this.currentPiece = [];
   this.nextPiece = this.getRandomPiece();
   this.startNow;
   this.lineCount = 0;
 }
 
+// Create blank Tetris game space. Push an array of 10 false values, 20 times total.
+tetrisGame.generateStartingBoard = function() {
+  var gameArray = [];
+  for (var i = 0; i < 20; i++) {
+    var rowArray = [];
+    for (var j = 0; j < 10; j++) {
+      rowArray.push(false);
+    }
+    gameArray.push(rowArray);
+  }
+  return gameArray;
+}
+// Randomly choose a new Tetromino piece
 tetrisGame.getRandomPiece = function() {
   var pieces = ["line","square","rightL","leftL","zigL","zigR","tee"];
   return pieces[Math.floor(Math.random() * 7)];
@@ -119,8 +124,8 @@ tetrisGame.checkCompleteRow = function() {
   return howManyLines;
 }
 
-// Take in completed row number as argument, clear that row and shift everything
-// above it down by 1
+// Take in completed row as argument, clear that row and take everything above
+// and shift it down by 1
 tetrisGame.clearCompleteRow = function(completedRow) {
   for (var i = completedRow; i > 0; i--) {          // Start at the completed row and work your way down
     for (var j = 0; j < this.space[i].length; j++) {
@@ -133,9 +138,7 @@ tetrisGame.clearCompleteRow = function(completedRow) {
   tetrisGame.updateBoard();
 }
 
-// Very early prototype of currentPiece movement function
-// It will definitely break when I start rotating pieces and introducing pile-up
-tetrisGame.movePiece = function() {
+tetrisGame.fallingPiece = function() {
   tetrisGame.clearPiece();
   if (!(tetrisGame.collisionFloor())) {
     for (var i = 0; i < tetrisGame.currentPiece.length; i++) {
@@ -161,7 +164,6 @@ tetrisGame.movePiece = function() {
   }
 }
 
-// Needs collision detection
 tetrisGame.moveLeft = function() {
   if(!(tetrisGame.collisionSide('left'))) {
     tetrisGame.clearPiece();
@@ -172,7 +174,6 @@ tetrisGame.moveLeft = function() {
   }
 }
 
-// Needs collision detection
 tetrisGame.moveRight = function() {
   if(!(tetrisGame.collisionSide('right'))) {
     tetrisGame.clearPiece();
@@ -183,7 +184,6 @@ tetrisGame.moveRight = function() {
   }
 }
 
-// Needs collision detection
 tetrisGame.moveDown = function() {
   if(!(tetrisGame.collisionFloorKeyDown())) {
     tetrisGame.clearPiece();
@@ -212,7 +212,6 @@ tetrisGame.moveRotate = function() {
   // Rotate coordinates and assign back to variable
   // Translate coordinates back to original orientation
   var pieceAndCollision = this.translateOriginAndRotate(this.currentPiece);
-  console.log("Original Coord: ", originalCoordinates);
   // if(!pieceAndCollision[1]) {
   //   this.currentPiece = pieceAndCollision[0];
   // }
@@ -472,7 +471,7 @@ tetrisGame.setInputHandler = function() {
 
 tetrisGame.play = function() {
   tetrisGame.buildPiece();
-  tetrisGame.startNow = setInterval(tetrisGame.movePiece, 500);
+  tetrisGame.startNow = setInterval(tetrisGame.fallingPiece, 500);
 
 }
 

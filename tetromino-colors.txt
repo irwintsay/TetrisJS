@@ -1,0 +1,15 @@
+Tetromino Colors
+
+Line: Cyan: rgb(0, 240, 240)
+
+J Block: Blue: rgb(0, 0, 240)
+
+L Block: Orange: rgb(221, 164, 34)
+
+O Block: Yellow: rgb(241, 239, 47)
+
+S Block: Green: rgb(138, 234, 40)
+
+T Block: Purple: rgb(136, 44, 237)
+
+Z Block: Red: rgb(207, 54, 22)
