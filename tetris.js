@@ -54,30 +54,24 @@ tetrisGame.buildPiece = function() {
   var currentPieceShape = this.nextPiece;
   switch(currentPieceShape) {
     case "line":
-      // this.currentPiece = [[0,3],[0,4],[0,5],[0,6]];
       this.currentPiece = [[0,4],[0,3],[0,5],[0,6]];    // Experimenting with placing origin coordinate first in array
       break;
     case "square":
       this.currentPiece = [[0,4],[0,5],[1,4],[1,5]];
       break;
     case "rightL":
-      // this.currentPiece = [[0,3],[0,4],[0,5],[1,3]];
       this.currentPiece = [[0,4],[0,3],[0,5],[1,3]];     // Experimenting with placing origin coordinate first in array
       break;
     case "leftL":
-      // this.currentPiece = [[0,3],[0,4],[0,5],[1,5]];
       this.currentPiece = [[0,4],[0,3],[0,5],[1,5]];    // Experimenting with placing origin coordinate first in array
       break;
     case "zigL":
-      // this.currentPiece = [[0,3],[0,4],[1,4],[1,5]];
       this.currentPiece = [[1,4],[0,3],[0,4],[1,5]];    // Experimenting with placing origin coordinate first in array
       break;
     case "zigR":
-      // this.currentPiece = [[0,4],[0,5],[1,3],[1,4]];
       this.currentPiece = [[1,4],[0,4],[0,5],[1,3]];    // Experimenting with placing origin coordinate first in array
       break;
     case "tee":
-      // this.currentPiece = [[0,3],[0,4],[0,5],[1,4]];
       this.currentPiece = [[0,4],[0,3],[0,5],[1,4]];    // Experimenting with placing origin coordinate first in array
       break;
   }
@@ -139,8 +133,10 @@ tetrisGame.clearCompleteRow = function(completedRow) {
 }
 
 tetrisGame.fallingPiece = function() {
-  tetrisGame.clearPiece();
+  // tetrisGame.clearPiece();
   if (!(tetrisGame.collisionFloor())) {
+    // New
+    tetrisGame.clearPiece();
     for (var i = 0; i < tetrisGame.currentPiece.length; i++) {
       tetrisGame.currentPiece[i][0]++;    // Increment each currentPiece coordinate X value by 1 to simulate downward movement
     }
@@ -156,7 +152,7 @@ tetrisGame.fallingPiece = function() {
         tetrisGame.currentPiece[2][0] === 0 ||
         tetrisGame.currentPiece[3][0] === 0
     ) {
-      alert("YOU LOSE");
+      $('#lost').text("YOU LOSE");
     } else {
       tetrisGame.nextPiece = tetrisGame.getRandomPiece();
       tetrisGame.play();
@@ -185,7 +181,7 @@ tetrisGame.moveRight = function() {
 }
 
 tetrisGame.moveDown = function() {
-  if(!(tetrisGame.collisionFloorKeyDown())) {
+  if(!(tetrisGame.collisionFloor())) {
     tetrisGame.clearPiece();
     for (var i = 0; i < tetrisGame.currentPiece.length; i++) {
       tetrisGame.currentPiece[i][0]++;
@@ -294,33 +290,13 @@ tetrisGame.reverseRotate = function(puzzlePiece, xShift, yShift) {
 tetrisGame.collisionFloor = function() {
   var collision = false;
   var x, y;
-  for (var i = 0; i < this.currentPiece.length; i++) {
-    x = this.currentPiece[i][0];
-    y = this.currentPiece[i][1];
-    if ((x + 1) === 20) {
-      collision = true;
-      tetrisGame.paintPiece();    // I paint the current piece one last time here because if I don't, the piece won't "persist" after collision is detected
-      console.log("collision");
-    } else if (this.space[x + 1][y]) {
-      collision = true;
-      tetrisGame.paintPiece();    // Same as above. I have to paint the current piece one last time.
-      console.log("collision");
-    }
-  }
-  return collision;
-}
-
-// Obviously need to figure out a way to refactor this function with the other collisionFloor function
-tetrisGame.collisionFloorKeyDown = function() {
-  var collision = false;
-  var x, y;
   tetrisGame.clearPiece();
   for (var i = 0; i < this.currentPiece.length; i++) {
     x = this.currentPiece[i][0];
     y = this.currentPiece[i][1];
     if ((x + 1) === 20) {
       collision = true;
-      console.log("wall collision below");
+      console.log("boundary collision below");
     } else if (this.space[x + 1][y]) {
       collision = true;
       console.log("block collision below");
@@ -472,7 +448,6 @@ tetrisGame.setInputHandler = function() {
 tetrisGame.play = function() {
   tetrisGame.buildPiece();
   tetrisGame.startNow = setInterval(tetrisGame.fallingPiece, 500);
-
 }
 
 $(function() {
