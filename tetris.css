@@ -30,19 +30,18 @@ h2 {
   background: white;
   /*background: url("http://meatfighter.com/nintendotetrisai/75.png");
   background-size: cover;*/
-  opacity: .80;
-  animation: fadein 2s;
+  opacity: 0;
 }
 
 .ready h1 {
   position: relative;
   top: 40%;
   font-size: 3rem;
-  opacity: 1;
 }
 
 #title {
   padding: 4rem;
+  z-index: 6;
 }
 
 #game-space {
@@ -71,14 +70,4 @@ h2 {
   width: 220px;
   margin: 0;
   padding: 0;
-}
-
-@keyframes fadein {
-  from { opacity: 0; }
-  to   { opacity: 0.8; }
-}
-
-@keyframes fadeout {
-  from  { opacity: 0.8; }
-  to    { opacity: 0; }
 }

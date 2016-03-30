@@ -153,6 +153,7 @@ tetrisGame.clearCompleteRow = function(completedRow) {
   tetrisGame.updateBoard(true);
 }
 
+// Controls the falling puzzle pieces
 tetrisGame.fallingPiece = function() {
   if (!(tetrisGame.collisionFloor())) {
     tetrisGame.clearPiece();
@@ -171,9 +172,8 @@ tetrisGame.fallingPiece = function() {
         tetrisGame.currentPiece[2][0] === 0 ||
         tetrisGame.currentPiece[3][0] === 0
     ) {
-      $('#lost').text("YOU LOSE");
       tetrisGame.gameOverDisplay();
-      tetrisGame.offInputHandler();
+      tetrisGame.turnOffHandler($('body'));
     } else {
       tetrisGame.nextPiece = tetrisGame.getRandomPiece();
       tetrisGame.play();
@@ -463,8 +463,9 @@ tetrisGame.setInputHandler = function() {
   })
 }
 
-tetrisGame.offInputHandler = function() {
-  $('body').off();
+// Turn off event handler for given selector
+tetrisGame.turnOffHandler = function(selector) {
+  selector.off();
 }
 
 tetrisGame.setReadyPlayHandler = function() {
@@ -473,10 +474,7 @@ tetrisGame.setReadyPlayHandler = function() {
       tetrisGame.init();
       tetrisGame.setInputHandler();
       tetrisGame.play();
-      $('.ready').css({
-        "animation": "fadeout 2s",
-        "opacity": "0"
-      });
+      tetrisGame.animateReadyScreen(0);
     } else if ($('#display-text').text() === "Game Over!") {
       $('#display-text').text("Click to play!");
     }
@@ -485,17 +483,23 @@ tetrisGame.setReadyPlayHandler = function() {
 
 tetrisGame.gameOverDisplay = function() {
   $('#display-text').text("Game Over!");
-  $('.ready').css({
-    "animation": "fadein 2s",
-    "opacity": "0.8"
-  });
+  this.animateReadyScreen(0.8);
+  this.setReadyPlayHandler();
+}
+
+tetrisGame.animateReadyScreen = function(opacityValue) {
+  $('.ready').animate({
+    opacity: opacityValue
+  }, 1000)
 }
 
 tetrisGame.play = function() {
+  this.turnOffHandler($('.ready'));
   tetrisGame.buildPiece();
   tetrisGame.startNow = setInterval(tetrisGame.fallingPiece, 500);
 }
 
 $(function() {
+  tetrisGame.animateReadyScreen(0.8);
   tetrisGame.setReadyPlayHandler();
 })
