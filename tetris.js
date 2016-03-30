@@ -1,33 +1,11 @@
 // Declare tetrisGame Object
 var tetrisGame = {};
 
-tetrisGame.init = function($gameSpace) {
-  // this.space = [
-  //   [false,false,false,false,false,false,false,false,false,false],
-  //   [false,false,false,false,false,false,false,false,false,false],
-  //   [false,false,false,false,false,false,false,false,false,false],
-  //   [false,false,false,false,false,false,false,false,false,false],
-  //   [false,false,false,false,false,false,false,false,false,false],
-  //   [false,false,false,false,false,false,false,false,false,false],
-  //   [false,false,false,false,false,false,false,false,false,false],
-  //   [false,false,false,false,false,false,false,false,false,false],
-  //   [false,false,false,false,false,false,false,false,false,false],
-  //   [false,false,false,false,false,false,false,false,false,false],
-  //   [false,false,false,false,false,false,false,false,false,false],
-  //   [false,false,false,false,false,false,false,false,false,false],
-  //   [false,false,false,false,false,false,false,false,false,false],
-  //   [false,false,false,false,false,false,false,false,false,false],
-  //   [false,false,false,false,false,false,false,false,false,false],
-  //   [false,false,false,false,false,false,false,false,false,false],
-  //   [false,false,false,false,false,false,false,false,false,false],
-  //   [false,false,false,false,false,false,false,false,false,false],
-  //   [false,false,false,false,false,false,false,false,false,false],
-  //   [false,false,false,false,false,false,false,false,false,false]
-  // ];
+// Initialize Tetris Game
+tetrisGame.init = function() {
   this.space = this.generateStartingBoard();
-  this.gameSpace = $gameSpace;
   this.currentPiece = [];
-  this.currentShape;    // Test-branch code
+  this.currentShape;
   this.currentColor;
   this.nextPiece = this.getRandomPiece();
   this.startNow;
@@ -176,9 +154,7 @@ tetrisGame.clearCompleteRow = function(completedRow) {
 }
 
 tetrisGame.fallingPiece = function() {
-  // tetrisGame.clearPiece();
   if (!(tetrisGame.collisionFloor())) {
-    // New
     tetrisGame.clearPiece();
     for (var i = 0; i < tetrisGame.currentPiece.length; i++) {
       tetrisGame.currentPiece[i][0]++;    // Increment each currentPiece coordinate X value by 1 to simulate downward movement
@@ -196,11 +172,24 @@ tetrisGame.fallingPiece = function() {
         tetrisGame.currentPiece[3][0] === 0
     ) {
       $('#lost').text("YOU LOSE");
+      tetrisGame.gameOverDisplay();
+      tetrisGame.offInputHandler();
     } else {
       tetrisGame.nextPiece = tetrisGame.getRandomPiece();
       tetrisGame.play();
     }
   }
+}
+
+// Experimental Space Bar function
+tetrisGame.dropPieceNow = function() {
+  while (!tetrisGame.collisionFloor()) {
+    tetrisGame.clearPiece();
+    for (var i = 0; i < tetrisGame.currentPiece.length; i++) {
+      tetrisGame.currentPiece[i][0]++;    // Increment each currentPiece coordinate X value by 1 to simulate downward movement
+    }
+  }
+  tetrisGame.paintPiece();
 }
 
 tetrisGame.moveLeft = function() {
@@ -223,6 +212,7 @@ tetrisGame.moveRight = function() {
   }
 }
 
+// Move puzzle piece down by 1 unit
 tetrisGame.moveDown = function() {
   if(!(tetrisGame.collisionFloor())) {
     tetrisGame.clearPiece();
@@ -233,33 +223,28 @@ tetrisGame.moveDown = function() {
   }
 }
 
+// Rotate puzzle piece
 tetrisGame.moveRotate = function() {
-  tetrisGame.clearPiece();
-  // Translate coordinate to new origin of (0,0) and assign to variable
-  // Rotate coordinates and assign back to variable
-  // Translate coordinates back to original orientation
+  this.clearPiece();
   this.currentPiece = this.translateOriginAndRotate(this.currentPiece);
-  tetrisGame.paintPiece();
+  this.paintPiece();
 }
 
+// Rotate puzzle piece
+// Choose an origin point among the puzzle piece's coordinates
+// Translate that origin point to an origin of (0,0), store the distance to (0,0)
+// Translate all puzzle piece coordinates based on distance to (0,0)
 tetrisGame.translateOriginAndRotate = function(puzzlePiece) {
-  // Pick an origin point, find distance to (0,0), translate coordinates to a
-  // new origin point of (0,0).
-  // i.e. if current piece has an origin coordinate of (3,4), then I have to
-  // subtract -3 and -4 from x and y respectively of each current coordinate point
-  var origin = puzzlePiece[0];
-  var xShift = origin[0] - 0;
-  var yShift = origin[1] - 0;
-  var collision = false;
-  var x,y;
-  for (var i = 1; i < puzzlePiece.length; i++) {
+  var origin = puzzlePiece[0];                   // Choose an origin point, which is always stored in first element of array
+  var xShift = origin[0] - 0;                    // Store x distance to 0
+  var yShift = origin[1] - 0;                    // Store y distance to 0
+  var x,y, rotatedX, rotatedY;
+  for (var i = 1; i < puzzlePiece.length; i++) {  // Translate each coordinate according to distance from 0
     puzzlePiece[i][0] -= xShift;
     puzzlePiece[i][1] -= yShift;
   }
   // Rotate coordinates
-  var rotatedX;     // New X value
-  var rotatedY;     // New Y value
-  for (var i = 1; i < puzzlePiece.length; i++) {  // Should probably be in it's own function as well
+  for (var i = 1; i < puzzlePiece.length; i++) {  // Rotate translated coordinates
     rotatedX = puzzlePiece[i][1];                 // New X should equal old Y
     rotatedY = puzzlePiece[i][0] * -1;            // New Y should equal -(old X)
     puzzlePiece[i][0] = rotatedX;
@@ -270,42 +255,32 @@ tetrisGame.translateOriginAndRotate = function(puzzlePiece) {
     puzzlePiece[i][0] += xShift;
     puzzlePiece[i][1] += yShift;
   }
+  // Check for wall and block collision after rotation
   for (var i = 0; i < puzzlePiece.length; i++) {
-    x = puzzlePiece[i][0];
-    y = puzzlePiece[i][1];
-    if (y < 0 || y > 9) {
-      collision = true;
-      console.log("R collision with side");
-      tetrisGame.reverseRotate(puzzlePiece, xShift, yShift);
-    } else if (x < 0) {
-      collision = true;
-      console.log("R collision with ceiling");
-      tetrisGame.reverseRotate(puzzlePiece, xShift, yShift);
-    } else if (x > 19) {
-      collision = true;
-      console.log("R collision with floor");
-      tetrisGame.reverseRotate(puzzlePiece, xShift, yShift);
-    } else if (tetrisGame.space[x][y]) {
-      collision = true;
-      console.log("R collision with block");
+    x = puzzlePiece[i][0];                        // Get the final rotated x,y coordinates
+    y = puzzlePiece[i][1];                        // Check for collision with ceiling, sides, floor, and other blocks
+    if (y < 0 || y > 9 || x < 0 || x > 19 || tetrisGame.space[x][y]) {
+      console.log("Rotation collision");
+      // If collision is detected, reverse the rotation and translation formulas
+      // to arrive at original coordinates
       tetrisGame.reverseRotate(puzzlePiece, xShift, yShift);
     }
   }
   return puzzlePiece;
 }
 
-// EXPERIMENTAL CODE
 // Wow this is a really dumb way to implement rotation collision detection
-// but it actually works... leaving it for now, but ideally I would like to do
-// this with way less code.
+// but it actually works... leaving it for now. Ideally I would like to simply
+// store the original coordinates somewhere and replace the rotated coordinates
+// when a rotation collision is detected
 tetrisGame.reverseRotate = function(puzzlePiece, xShift, yShift) {
   for (var i = 1; i < puzzlePiece.length; i++) {
     puzzlePiece[i][0] -= xShift;
     puzzlePiece[i][1] -= yShift;
   }
-  for (var i = 1; i < puzzlePiece.length; i++) {  // Should probably be in it's own function as well
+  for (var i = 1; i < puzzlePiece.length; i++) {
     rotatedX = puzzlePiece[i][1] * -1;                 // New X should equal old Y
-    rotatedY = puzzlePiece[i][0];            // New Y should equal -(old X)
+    rotatedY = puzzlePiece[i][0];                      // New Y should equal -(old X)
     puzzlePiece[i][0] = rotatedX;
     puzzlePiece[i][1] = rotatedY;
   }
@@ -429,6 +404,7 @@ tetrisGame.paintDiv = function(x, y, shouldPaint, overWrite) {
   if (shouldPaint) {
     $rowHunt.eq(y).css({
       "background-color": this.getRGBColor(this.space[x][y]),
+      // "background": "liner-gradient(to bottom right, yellow, red)",
       "border": "1px solid black"
     });
     // EXPERIMENTAL
@@ -463,12 +439,13 @@ tetrisGame.updateBoard = function(overWrite) {
   }
 }
 
+// Set event handler for player controls:
+// arrow keys up, down, left, right, and space bar
 tetrisGame.setInputHandler = function() {
   $('body').keydown(function(e){
     switch (e.which) {
       case 32:
-        // Code for space bar
-        // Drop current piece to lowest possible point
+        tetrisGame.dropPieceNow();
         break;
       case 37:
         tetrisGame.moveLeft();
@@ -486,14 +463,39 @@ tetrisGame.setInputHandler = function() {
   })
 }
 
+tetrisGame.offInputHandler = function() {
+  $('body').off();
+}
+
+tetrisGame.setReadyPlayHandler = function() {
+  $('.ready').click(function() {
+    if ($('#display-text').text() === "Click to play!") {
+      tetrisGame.init();
+      tetrisGame.setInputHandler();
+      tetrisGame.play();
+      $('.ready').css({
+        "animation": "fadeout 2s",
+        "opacity": "0"
+      });
+    } else if ($('#display-text').text() === "Game Over!") {
+      $('#display-text').text("Click to play!");
+    }
+  })
+}
+
+tetrisGame.gameOverDisplay = function() {
+  $('#display-text').text("Game Over!");
+  $('.ready').css({
+    "animation": "fadein 2s",
+    "opacity": "0.8"
+  });
+}
+
 tetrisGame.play = function() {
   tetrisGame.buildPiece();
   tetrisGame.startNow = setInterval(tetrisGame.fallingPiece, 500);
 }
 
 $(function() {
-  var $gameSpace = $('.game-block');
-  tetrisGame.init($gameSpace);
-  tetrisGame.setInputHandler();
-  tetrisGame.play();
+  tetrisGame.setReadyPlayHandler();
 })
