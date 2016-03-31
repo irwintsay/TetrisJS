@@ -1,3 +1,5 @@
+![Tetris](http://i.imgur.com/BCAahHml.png "Tetris")
+
 # JavaScript Tetris
 
 Hello! Welcome to my Tetris game!!
