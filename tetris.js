@@ -24,7 +24,7 @@ tetrisGame.init = function() {
   this.printLevel(this.levelCount);
 }
 
-// Create blank Tetris game space. Push an array of 10 false values, 20 times total.
+// Create blank Tetris game space. Push an array of 10 false values, 20 times total
 tetrisGame.generateStartingBoard = function() {
   var gameArray = [];
   for (var i = 0; i < 20; i++) {
@@ -36,12 +36,15 @@ tetrisGame.generateStartingBoard = function() {
   }
   return gameArray;
 }
+
 // Randomly choose a new Tetromino piece
 tetrisGame.getRandomPiece = function() {
   var pieces = ["line","square","rightL","leftL","zigL","zigR","tee"];
   return pieces[Math.floor(Math.random() * 7)];
 }
 
+// "Build" the next puzzle piece by taking in the shape and determining the starting
+// coordinates of the puzzle piece which are defined below in the switch statement
 tetrisGame.buildPiece = function() {
   this.currentShape = this.nextPiece;
   // Placed the origin coordinate first in each shape array
@@ -79,7 +82,7 @@ tetrisGame.buildPiece = function() {
 }
 
 // Pass in color code of 1 through 7 and return the RGB color value for that
-// code
+// code/shape
 tetrisGame.getRGBColor = function(colorCode) {
   var rgbColor;
   switch(colorCode) {
@@ -111,6 +114,9 @@ tetrisGame.getRGBColor = function(colorCode) {
   return rgbColor;
 }
 
+// Iterate through the current puzzle piece array and update the game space
+// array with the current color which is determined by the puzzle piece shape
+// Update color data to the HTML document with updateBoard()
 tetrisGame.paintPiece = function() {
   var x, y;
   for (var i = 0; i < this.currentPiece.length; i++) {
@@ -121,14 +127,19 @@ tetrisGame.paintPiece = function() {
   this.updateBoard();
 }
 
+// Render the current number of lines cleared to HTML
 tetrisGame.printScore = function(howManyLines) {
   $('#score').text("Lines: " + howManyLines);
 }
 
+// Render the current level to HTML
 tetrisGame.printLevel = function(howManyLevels) {
   $('#level').text("Level: " + howManyLevels);
 }
 
+// Remove the current puzzle piece coordinates from the game space array
+// This is often critical for evaluating collision detection because we don't
+// want a puzzle piece to detect collision against its own coordinates
 tetrisGame.clearPiece = function() {
   var x, y;
   for (var i = 0; i < this.currentPiece.length; i++) {
@@ -175,6 +186,7 @@ tetrisGame.clearCompleteRow = function(completedRow) {
 }
 
 
+// Evaluate and return new level
 // Play speed increase is not working for some reason
 tetrisGame.checkLevelCount = function(newLevelCount) {
   if (newLevelCount > tetrisGame.lineCount && tetrisGame.playSpeed > 0) {
@@ -184,6 +196,10 @@ tetrisGame.checkLevelCount = function(newLevelCount) {
 }
 
 // Controls the falling puzzle pieces
+// I struggled with this function. It is a relic of where this program was
+// when I first started prototyping ideas. Given more time, I would've split it
+// into proper functions with more concrete, singular objectives. As is, its
+// the crux of how this Tetris game continually loops new falling puzzle pieces.
 tetrisGame.fallingPiece = function() {
   if (!(tetrisGame.collisionFloor())) {
     tetrisGame.clearPiece();
@@ -215,7 +231,7 @@ tetrisGame.fallingPiece = function() {
   }
 }
 
-// Experimental Space Bar function
+// Space Bar function for dropping puzzle pieces to lowest possible point
 tetrisGame.dropPieceNow = function() {
   while (!tetrisGame.collisionFloor()) {
     tetrisGame.clearPiece();
@@ -226,6 +242,7 @@ tetrisGame.dropPieceNow = function() {
   tetrisGame.paintPiece();
 }
 
+// Handles moving puzzle pieces to the left
 tetrisGame.moveLeft = function() {
   if(!(tetrisGame.collisionSide('left'))) {
     tetrisGame.clearPiece();
@@ -236,6 +253,7 @@ tetrisGame.moveLeft = function() {
   }
 }
 
+// Handles moving puzzle pieces to the right
 tetrisGame.moveRight = function() {
   if(!(tetrisGame.collisionSide('right'))) {
     tetrisGame.clearPiece();
@@ -303,10 +321,12 @@ tetrisGame.translateOriginAndRotate = function(puzzlePiece) {
   return puzzlePiece;
 }
 
-// Wow this is a really dumb way to implement rotation collision detection
-// but it actually works... leaving it for now. Ideally I would like to simply
-// store the original coordinates somewhere and replace the rotated coordinates
-// when a rotation collision is detected
+// This is a really dumb way to implement rotation collision detection
+// but it works... Ideally I would like to simply store the original coordinates
+// somewhere and replace the rotated coordinates when a rotation collision is
+// detected. I tried everything, including an idea Rafa gave me which was to
+// slice the currentPiece into a new array. But every method I tried, the currentPiece
+// would always map its values to the new array as it was translated and rotated.
 tetrisGame.reverseRotate = function(puzzlePiece, xShift, yShift) {
   for (var i = 1; i < puzzlePiece.length; i++) {
     puzzlePiece[i][0] -= xShift;
@@ -324,6 +344,8 @@ tetrisGame.reverseRotate = function(puzzlePiece, xShift, yShift) {
   }
 }
 
+// Check for collision below the currentPiece, including wall boundary and other
+// blocks
 tetrisGame.collisionFloor = function() {
   var collision = false;
   var x, y;
@@ -370,6 +392,9 @@ tetrisGame.collisionSide = function(side) {
   return collision;
 }
 
+// Accept x and y coordinates and a boolean telling the function whether to
+// paint the div a color or empty it. This function basically translates the
+// game space, represented by an array, into painted Divs in the HTML
 tetrisGame.paintDiv = function(x, y, shouldPaint) {
   var $rowHunt;
   var color = this.getRGBColor(this.currentColor);
@@ -448,6 +473,8 @@ tetrisGame.paintDiv = function(x, y, shouldPaint) {
   }
 }
 
+// Iterates through game space array and calls paintDiv to update colors in the
+// HTML
 tetrisGame.updateBoard = function() {
   for (var i = 0; i < this.space.length; i++) {
     for (var j = 0; j < this.space[i].length; j++) {
@@ -530,6 +557,8 @@ tetrisGame.animateReadyScreen = function(opacityValue) {
   }, 1000)
 }
 
+// Turns off ready handler, builds a new puzzle piece and restarts the falling
+// piece loop.
 tetrisGame.play = function() {
   this.turnOffHandler($('.ready'));
   tetrisGame.buildPiece();
