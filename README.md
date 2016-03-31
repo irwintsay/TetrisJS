@@ -45,3 +45,8 @@ There's more stuff I'm forgetting.
 ### Anyways...
 
 I'm really pleased with how this project turned out. I learned a ton and gained some valuable experience banging on this project for a week. I hope you enjoy the game and its development as much as I enjoyed making it!
+
+### Extras
+
+Mock-up made with Balsamiq
+![Wireframe](http://i.imgur.com/boxHZLLl.png "Wireframe")
