@@ -1,6 +1,14 @@
 // Declare tetrisGame Object
 var tetrisGame = {};
 
+// Audio Effects
+tetrisGame.moveSound = new Audio("TetrisSound-Move.mp3");
+tetrisGame.rotateSound = new Audio("TetrisSound-Rotate.mp3");
+tetrisGame.landSound = new Audio("TetrisSound-Land.mp3");
+tetrisGame.clearLineSound = new Audio("TetrisSound-ClearLine.mp3");
+tetrisGame.tetrisSound = new Audio("TetrisSound-Tetris.mp3");
+
+
 // Initialize Tetris Game
 tetrisGame.init = function() {
   this.space = this.generateStartingBoard();
@@ -10,6 +18,10 @@ tetrisGame.init = function() {
   this.nextPiece = this.getRandomPiece();
   this.startNow;
   this.lineCount = 0;
+  this.levelCount = 0;
+  this.playSpeed = 501;
+  this.printScore(this.lineCount);
+  this.printLevel(this.levelCount);
 }
 
 // Create blank Tetris game space. Push an array of 10 false values, 20 times total.
@@ -106,11 +118,15 @@ tetrisGame.paintPiece = function() {
     y = this.currentPiece[i][1];
     this.space[x][y] = this.currentColor;
   }
-  this.updateBoard(false);
+  this.updateBoard();
 }
 
 tetrisGame.printScore = function(howManyLines) {
   $('#score').text("Lines: " + howManyLines);
+}
+
+tetrisGame.printLevel = function(howManyLevels) {
+  $('#level').text("Level: " + howManyLevels);
 }
 
 tetrisGame.clearPiece = function() {
@@ -120,13 +136,12 @@ tetrisGame.clearPiece = function() {
     y = this.currentPiece[i][1];
     this.space[x][y] = 0;
   }
-  this.updateBoard(false);
+  this.updateBoard();
 }
 
 // Find completed rows in game space
 tetrisGame.checkCompleteRow = function() {
   var howManyLines = 0;       // Keep track of how many lines are cleared for score keeping
-
   function isAllTrue(element) {
     return element;
   }
@@ -135,6 +150,11 @@ tetrisGame.checkCompleteRow = function() {
       this.clearCompleteRow(i);
       howManyLines++;
     }
+  }
+  if (howManyLines === 4) {
+    tetrisGame.tetrisSound.play();      // Play Tetris sound if Tetris completed
+  } else if (howManyLines > 0) {
+    tetrisGame.clearLineSound.play();   // Play normal clear sound otherwise
   }
   return howManyLines;
 }
@@ -150,7 +170,17 @@ tetrisGame.clearCompleteRow = function(completedRow) {
   for (var k = 0; k < this.space[0].length; k++) {
     this.space[0][k] = 0;
   }
-  tetrisGame.updateBoard(true);
+
+  tetrisGame.updateBoard();
+}
+
+
+// Play speed increase is not working for some reason
+tetrisGame.checkLevelCount = function(newLevelCount) {
+  if (newLevelCount > tetrisGame.lineCount && tetrisGame.playSpeed > 0) {
+    tetrisGame.playSpeed -= 100;
+  }
+  return newLevelCount;
 }
 
 // Controls the falling puzzle pieces
@@ -162,10 +192,14 @@ tetrisGame.fallingPiece = function() {
     }
     tetrisGame.paintPiece();
   } else {
+    tetrisGame.landSound.play();          // Play sound effect for landing a puzzle piece
     clearInterval(tetrisGame.startNow);
 
     tetrisGame.lineCount += tetrisGame.checkCompleteRow();
     tetrisGame.printScore(tetrisGame.lineCount);
+
+    tetrisGame.levelCount = tetrisGame.checkLevelCount(Math.floor(tetrisGame.lineCount / 10))
+    tetrisGame.printLevel(tetrisGame.levelCount);
 
     if (tetrisGame.currentPiece[0][0] === 0 ||
         tetrisGame.currentPiece[1][0] === 0 ||
@@ -336,7 +370,7 @@ tetrisGame.collisionSide = function(side) {
   return collision;
 }
 
-tetrisGame.paintDiv = function(x, y, shouldPaint, overWrite) {
+tetrisGame.paintDiv = function(x, y, shouldPaint) {
   var $rowHunt;
   var color = this.getRGBColor(this.currentColor);
   switch(x) {
@@ -404,21 +438,8 @@ tetrisGame.paintDiv = function(x, y, shouldPaint, overWrite) {
   if (shouldPaint) {
     $rowHunt.eq(y).css({
       "background-color": this.getRGBColor(this.space[x][y]),
-      // "background": "liner-gradient(to bottom right, yellow, red)",
       "border": "1px solid black"
     });
-    // EXPERIMENTAL
-    // if ($rowHunt.eq(y).css("background-color") === "rgb(216, 216, 216)") {
-    //   $rowHunt.eq(y).css({
-    //     "background-color": color,
-    //     "border": "1px solid black"
-    //   });
-    // } else if (overWrite) {
-    //   $rowHunt.eq(y).css({
-    //     "background-color": this.getRGBColor(y),
-    //     "border": "1px solid black"
-    //   });
-    // }
   } else {
     $rowHunt.eq(y).css({
       "background-color": "rgb(216,216,216)",
@@ -427,13 +448,13 @@ tetrisGame.paintDiv = function(x, y, shouldPaint, overWrite) {
   }
 }
 
-tetrisGame.updateBoard = function(overWrite) {
+tetrisGame.updateBoard = function() {
   for (var i = 0; i < this.space.length; i++) {
     for (var j = 0; j < this.space[i].length; j++) {
       if (this.space[i][j]) {
-        this.paintDiv(i,j,true,overWrite);
+        this.paintDiv(i,j,true);
       } else {
-        this.paintDiv(i,j,false,overWrite);
+        this.paintDiv(i,j,false);
       }
     }
   }
@@ -448,17 +469,24 @@ tetrisGame.setInputHandler = function() {
         tetrisGame.dropPieceNow();
         break;
       case 37:
+        tetrisGame.moveSound.play();
         tetrisGame.moveLeft();
         break;
       case 39:
+        tetrisGame.moveSound.play();
         tetrisGame.moveRight();
         break;
       case 38:
+        tetrisGame.rotateSound.play();
         tetrisGame.moveRotate();
         break;
       case 40:
         tetrisGame.moveDown();
         break;
+      case 77:
+        $('#music').trigger("pause");
+        break;
+
     }
   })
 }
@@ -468,6 +496,11 @@ tetrisGame.turnOffHandler = function(selector) {
   selector.off();
 }
 
+// Ready Play handler checks the text of the Ready/Game Over modal
+// If the text reads "Click to play!", the handler waits for a mouse click to
+// initialize the game and start playing the game.
+// If the test reads "Game Over!", the handler waits for a mouse click to switch
+// back to the "Click to play!" screen.
 tetrisGame.setReadyPlayHandler = function() {
   $('.ready').click(function() {
     if ($('#display-text').text() === "Click to play!") {
@@ -475,18 +508,22 @@ tetrisGame.setReadyPlayHandler = function() {
       tetrisGame.setInputHandler();
       tetrisGame.play();
       tetrisGame.animateReadyScreen(0);
+      $('#music').attr("src","TetrisMusicA.ogg");     // Change music to Play music
     } else if ($('#display-text').text() === "Game Over!") {
       $('#display-text').text("Click to play!");
     }
   })
 }
 
+// Display Game Over screen modal, set Ready Play handler
 tetrisGame.gameOverDisplay = function() {
   $('#display-text').text("Game Over!");
   this.animateReadyScreen(0.8);
   this.setReadyPlayHandler();
+  $('#music').attr("src","TetrisSound-Scores.mp3");     // Change music to Game Over music
 }
 
+// Animate opacity change of the Ready/Game Over screen
 tetrisGame.animateReadyScreen = function(opacityValue) {
   $('.ready').animate({
     opacity: opacityValue
@@ -496,9 +533,10 @@ tetrisGame.animateReadyScreen = function(opacityValue) {
 tetrisGame.play = function() {
   this.turnOffHandler($('.ready'));
   tetrisGame.buildPiece();
-  tetrisGame.startNow = setInterval(tetrisGame.fallingPiece, 500);
+  tetrisGame.startNow = setInterval(tetrisGame.fallingPiece, tetrisGame.playSpeed);
 }
 
+// On document load, animate the Ready screen and set Ready Play handler
 $(function() {
   tetrisGame.animateReadyScreen(0.8);
   tetrisGame.setReadyPlayHandler();

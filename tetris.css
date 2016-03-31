@@ -2,13 +2,15 @@ html {
   box-sizing: content-box;
 }
 body {
-  background-color: grey;
+  /*background-color: grey;*/
+  background: url("tetris-background.jpg");
   height: 100%;
   width: 100%;
   margin: 0;
   padding: 0;
   font-size: 16px;
   font-family: "Press Start 2P";
+  color: white;
 }
 
 h1 {
