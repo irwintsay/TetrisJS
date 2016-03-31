@@ -2,19 +2,55 @@ html {
   box-sizing: content-box;
 }
 body {
-  background-color: lightgrey;
+  /*background-color: grey;*/
+  background: url("tetris-background.jpg");
+  background-size: cover;
   height: 100%;
   width: 100%;
   margin: 0;
   padding: 0;
   font-size: 16px;
+  font-family: "Press Start 2P";
+  color: white;
+}
+
+h1 {
+  text-align: center;
+  font-size: 3rem;
+  margin: 0;
+}
+
+h2 {
+  margin-left: 1rem;
+}
+
+.ready {
+  position: absolute;
+  margin: auto;
+  height: 100%;
+  width: 100%;
+  z-index: 5;
+  background: white;
+  opacity: 0;
+}
+
+.ready h1 {
+  position: relative;
+  top: 40%;
+  font-size: 3rem;
+  color: black;
+}
+
+#title {
+  padding: 4rem;
+  z-index: 6;
 }
 
 #game-space {
   width: 220px;
   height: 440px;
-  background-color: black;
-  margin: -200px 0 0 -100px;
+  background-color: #D8D8D8;
+  margin: -200px 0 0 -110px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -25,7 +61,7 @@ body {
   display: inline-block;
   height: 20px;
   width: 20px;
-  border: 1px solid white;
+  border: 1px solid #BFBFBF;
   margin: 0;
   padding: 0;
   position: relative;

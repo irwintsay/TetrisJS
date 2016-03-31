@@ -3,11 +3,20 @@
   <head>
     <meta charset="utf-8">
     <title>Tetris perhaps???</title>
+    <link href='https://fonts.googleapis.com/css?family=Press+Start+2P' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="tetris.css" media="screen" title="no title" charset="utf-8">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2/jquery.js" charset="utf-8"></script>
     <script src="tetris.js" charset="utf-8"></script>
   </head>
   <body>
+    <div class="ready">
+      <h1 id="display-text">Click to play!</h1>
+    </div>
+    <div id="title">
+      <h1>TETRIS</h1>
+      <h2 id="score"></h2>
+      <h2 id="level"></h2>
+    </div>
     <div id="game-space">
       <div class="row" id="r1">
         <div class="game-block" row="1" col="1"></div><div class="game-block" row="1" col="2"></div><div class="game-block" row="1" col="3"></div><div class="game-block" row="1" col="4"></div><div class="game-block" row="1" col="5"></div><div class="game-block" row="1" col="6"></div><div class="game-block" row="1" col="7"></div><div class="game-block" row="1" col="8"></div><div class="game-block" row="1" col="9"></div><div class="game-block" row="1" col="10"></div>
@@ -70,5 +79,7 @@
         <div class="game-block" row="20" col="1"></div><div class="game-block" row="20" col="2"></div><div class="game-block" row="20" col="3"></div><div class="game-block" row="20" col="4"></div><div class="game-block" row="20" col="5"></div><div class="game-block" row="20" col="6"></div><div class="game-block" row="20" col="7"></div><div class="game-block" row="20" col="8"></div><div class="game-block" row="20" col="9"></div><div class="game-block" row="20" col="10"></div>
       </div>
     </div>
+    <audio id="music" autoplay="true" loop src="TetrisMusicA.ogg">
+    </audio>
   </body>
 </html>
