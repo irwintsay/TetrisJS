@@ -49,4 +49,5 @@ I'm really pleased with how this project turned out. I learned a ton and gained 
 ### Extras
 
 Mock-up made with Balsamiq
+
 ![Wireframe](http://i.imgur.com/boxHZLLl.png "Wireframe")
